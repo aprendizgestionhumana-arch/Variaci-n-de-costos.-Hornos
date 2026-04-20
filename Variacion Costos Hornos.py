@@ -332,9 +332,11 @@ def process_excel_data(uploaded_file):
     # 1. Carga del archivo a un objeto BytesIO y a DataFrames de pandas
     try:
         excel_data = uploaded_file.read()
+        excel_buffer = io.BytesIO(excel_data)
         
-        df_actual = pd.read_excel(excel_data, sheet_name=HOJA_ACTUAL, header=0)
-        df_anterior = pd.read_excel(excel_data, sheet_name=HOJA_ANTERIOR, header=0)
+        df_actual = pd.read_excel(excel_buffer, sheet_name=HOJA_ACTUAL, header=0)
+        excel_buffer.seek(0)  # MUY IMPORTANTE: resetear el buffer
+        df_anterior = pd.read_excel(excel_buffer, sheet_name=HOJA_ANTERIOR, header=0)
         
     except Exception as e:
         st.error(f"❌ ERROR al cargar las hojas de Excel: Asegúrese de que existen las hojas '{HOJA_ACTUAL}' y '{HOJA_ANTERIOR}'. Error: {e}")
